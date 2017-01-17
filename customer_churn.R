@@ -71,9 +71,17 @@ corrmatrix
 #heatmap of correlation matrix using ggplot2
 qplot(x=Var1, y=Var2, data=melt(cor(cust_data, use="p")), fill=value, geom="tile") +  scale_fill_gradient2(limits=c(-1, 1))
 
+#########################################
+#Model Building                         #
+#########################################
 
-#Model Building
-#split data to 80-20
+# For training and testing purpose,
+# split the data to 80-20
+
+set.seed(1234)
+intrain<-createDataPartition(y=cust_data$Churn,p=0.8,list=FALSE, times = 1)
+training<-cust_data[intrain,]
+testing<-cust_data[-intrain,]
 
 #########################################
 #Model 1: Logistic Regression Model     #
