@@ -11,26 +11,31 @@ library(caret)
 library(ggplot2)
 library(data.table)
 library(car)
+library(corrplot)
+library(rattle)
+library(randomForest)
+library(rpart)
+library(C50)
+library(ROCR)
+library(e1071)
 
 #load the data
 cust_data<-fread('telco.csv', header=TRUE, sep=",")
 
-#overview of customer data
-View(cust_data)
-str(cust_data)
+#########################
+#Data Proprocessing     #        
+#########################
 
-#data proprocessing
-#replace NAs as 0
+#Handling Missing Values: Replace NAs as 0
 cust_data[is.na(cust_data)] <- 0
 
-#replace Churn status, Yes = 1, No = 1
-
+#Recode Variables: Replace Churn status, Yes = 1, No = 1
 cust_data$Churn <-replace(cust_data$Churn,cust_data$Churn == "No",0)
 cust_data$Churn <-replace(cust_data$Churn,cust_data$Churn == "Yes",1)
 cust_data$Churn<-as.numeric(cust_data$Churn)
 
 
-#recode using the library(car) package
+#Recode Variables: Recode using the library(car) package
 cust_data$gender<-recode(cust_data$gender, "'Male'=1; 'Female'=0")
 cust_data$Partner<-recode(cust_data$Partner, "'Yes'=1; 'No'=0")
 cust_data$Dependents<-recode(cust_data$Dependents, "'Yes'=1; 'No'=0")
@@ -47,7 +52,13 @@ cust_data$Contract <- recode(cust_data$Contract, "'Month-to-month'=0; 'One year'
 cust_data$PaperlessBilling<- recode(cust_data$PaperlessBilling, "'Yes'=1; 'No'=0")
 cust_data$PaymentMethod <- recode(cust_data$PaymentMethod, "'Electronic check'=1; 'Mailed check'=2;'Bank transfer (automatic)'=3; 'Credit card (automatic)'=4")
 
-#data exploratory
+#################################
+#Data Exploratory               #
+#################################
+
+#overview of customer data
+View(cust_data)
+str(cust_data)
 
 
 #Model Building
