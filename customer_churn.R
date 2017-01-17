@@ -87,8 +87,9 @@ testing<-cust_data[-intrain,]
 #Model 1: Logistic Regression Model     #
 #########################################
 
-#Select the features to be used based on forward selection procedure
-#Lower AIC indicates better model
+# Select the features to be used based on forward selection procedure
+# Akaike information criterion (AIC = 2k - 2 log L) as the choice of
+# metric. Lower AIC indicates better model
 
 fullMod = glm(Churn ~ ., data= training, family= binomial)
 summary(fullMod)
@@ -98,8 +99,22 @@ fwdSelection = step(intMod, scope=list(lower=formula(intMod),upper=formula(fullM
 formula(fwdSelection)
 summary(fwdSelection)
 
+#Logistic Regression Model with selected variables
 
+logic_reg <- glm(Churn ~ Contract + InternetService + tenure + PaperlessBilling+TotalCharges + MultipleLines + PaymentMethod +SeniorCitizen + StreamingTV + OnlineSecurity + TechSupport + StreamingMovies + MonthlyCharges + PhoneService + Dependents, data=training, family=binomial)
+
+summary(logic_reg)
+
+#----------------------------------------------------------------
 #Predictive Performance Measurement
+#----------------------------------------------------------------
+
+#Influence Plot
+# Diagnostic Plot 
+influenceIndexPlot(logic_reg, vars=c("cook","hat"), id.n = 3 )
+
+# Influence Plot 
+influencePlot(logic_reg,	id.method="identify", main="Influence Plot", sub="Circle size is proportial to Cook's Distance" )
 
 #Odd Ratio
 
