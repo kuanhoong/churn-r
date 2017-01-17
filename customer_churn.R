@@ -115,8 +115,20 @@ influenceIndexPlot(logic_reg, vars=c("cook","hat"), id.n = 3 )
 # Influence Plot 
 influencePlot(logic_reg,	id.method="identify", main="Influence Plot", sub="Circle size is proportial to Cook's Distance" )
 
-# Odd Ratio
+#Confidence Interval (CI) and Coefficient in scaled format
 exp(confint(logic_reg))
+
+exp(logic_reg$coefficients)
+
+# Odd Ratio and 95% Confidence Interval
+exp(cbind(OR=coef(logic_reg), confint(logic_reg)))
+
+# A logistic regression model has been built and the
+# coefficients have been examined. However, some critical
+# questions remain. Is the model any good? How well does
+# the model fit the data? Which predictors are most
+# important? Are the predictions accurate? Listed below
+# are some of the Diagnostics tests.
 
 ###############################################
 #Model 2: Support Vector Machine (SVM) Model  #
