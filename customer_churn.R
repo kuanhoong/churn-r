@@ -9,13 +9,43 @@ setwd('C:/Users/Kuan/Documents/github/churn-r')
 
 library(caret)
 library(ggplot2)
+library(data.table)
+library(car)
 
 #load the data
-cust_data<-read.csv('telco.csv')
+cust_data<-fread('telco.csv', header=TRUE, sep=",")
+
+#overview of customer data
 View(cust_data)
 str(cust_data)
 
 #data proprocessing
+#replace NAs as 0
+cust_data[is.na(cust_data)] <- 0
+
+#replace Churn status, Yes = 1, No = 1
+
+cust_data$Churn <-replace(cust_data$Churn,cust_data$Churn == "No",0)
+cust_data$Churn <-replace(cust_data$Churn,cust_data$Churn == "Yes",1)
+cust_data$Churn<-as.numeric(cust_data$Churn)
+
+
+#recode using the library(car) package
+cust_data$gender<-recode(cust_data$gender, "'Male'=1; 'Female'=0")
+cust_data$Partner<-recode(cust_data$Partner, "'Yes'=1; 'No'=0")
+cust_data$Dependents<-recode(cust_data$Dependents, "'Yes'=1; 'No'=0")
+cust_data$PhoneService <- recode(cust_data$PhoneService, "'Yes'=1; 'No'=0")
+cust_data$MultipleLines <- recode(cust_data$MultipleLines, "'Yes'=1; 'No'=0;'No phone service'=3")
+cust_data$InternetService <- recode(cust_data$InternetService, "'No'=0; 'DSL'=1;'Fiber optic'=2")
+cust_data$OnlineSecurity <- recode(cust_data$OnlineSecurity, "'No'=0; 'Yes'=1;'No internet service'=2")
+cust_data$OnlineBackup <- recode(cust_data$OnlineBackup, "'No'=0; 'Yes'=1;'No internet service'=2")
+cust_data$DeviceProtection <- recode(cust_data$DeviceProtection, "'No'=0; 'Yes'=1;'No internet service'=2")
+cust_data$TechSupport <- recode(cust_data$TechSupport, "'No'=0; 'Yes'=1;'No internet service'=2")
+cust_data$StreamingTV <- recode(cust_data$StreamingTV, "'No'=0; 'Yes'=1;'No internet service'=2")
+cust_data$StreamingMovies <- recode(cust_data$StreamingMovies, "'No'=0; 'Yes'=1;'No internet service'=2")
+cust_data$Contract <- recode(cust_data$Contract, "'Month-to-month'=0; 'One year'=1;'Two year'=2")
+cust_data$PaperlessBilling<- recode(cust_data$PaperlessBilling, "'Yes'=1; 'No'=0")
+cust_data$PaymentMethod <- recode(cust_data$PaymentMethod, "'Electronic check'=1; 'Mailed check'=2;'Bank transfer (automatic)'=3; 'Credit card (automatic)'=4")
 
 #data exploratory
 
@@ -41,7 +71,9 @@ str(cust_data)
 #Variable Importance Plot
 
 
-
+#######################################
+#C50 algorithm and decision rule      #
+#######################################
 
 
 
