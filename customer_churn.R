@@ -26,6 +26,9 @@ cust_data<-fread('telco.csv', header=TRUE, sep=",")
 #Data Proprocessing     #        
 #########################
 
+#Remove Unwanted Variables
+cust_data <- cust_data[,-1]
+
 #Handling Missing Values: Replace NAs as 0
 cust_data[is.na(cust_data)] <- 0
 
@@ -58,7 +61,15 @@ cust_data$PaymentMethod <- recode(cust_data$PaymentMethod, "'Electronic check'=1
 
 #overview of customer data
 View(cust_data)
+summary(cust_data)
 str(cust_data)
+
+#Correlation Matrix
+corrmatrix <- round(cor(cust_data[]), digits = 2)
+corrmatrix
+
+#heatmap of correlation matrix using ggplot2
+qplot(x=Var1, y=Var2, data=melt(cor(cust_data, use="p")), fill=value, geom="tile") +  scale_fill_gradient2(limits=c(-1, 1))
 
 
 #Model Building
