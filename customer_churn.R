@@ -138,10 +138,17 @@ predict <- predict(logic_reg, type = 'response')
 #confusion matrix
 table(training$Churn, predict > 0.5)
 
-#ROCR Curve
+# Receiver Operating Characteristic (ROC) curves
+
 ROCRpred <- prediction(predict, training$Churn)
 ROCRperf <- performance(ROCRpred, 'tpr','fpr')
 plot(ROCRperf, colorize = TRUE, text.adj = c(-0.2,1.7))
+abline(a=0, b= 1)
+
+# Accuracy
+
+acc.perf = performance(ROCRpred, measure = 'acc')
+plot(acc.perf)
 
 #plot glm
 ggplot(training, aes(x=Rating, y=Churn)) + geom_point() + 
