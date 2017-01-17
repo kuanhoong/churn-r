@@ -23,22 +23,22 @@ library(e1071)
 cust_data<-fread('telco.csv', header=TRUE, sep=",")
 
 #########################
-#Data Proprocessing     #        
+# Data Proprocessing    #        
 #########################
 
-#Remove Unwanted Variables
+# Remove Unwanted Variables
 cust_data <- cust_data[,-1]
 
-#Handling Missing Values: Replace NAs as 0
+# Handling Missing Values: Replace NAs as 0
 cust_data[is.na(cust_data)] <- 0
 
-#Recode Variables: Replace Churn status, Yes = 1, No = 1
+# Recode Variables: Replace Churn status, Yes = 1, No = 1
 cust_data$Churn <-replace(cust_data$Churn,cust_data$Churn == "No",0)
 cust_data$Churn <-replace(cust_data$Churn,cust_data$Churn == "Yes",1)
 cust_data$Churn<-as.numeric(cust_data$Churn)
 
 
-#Recode Variables: Recode using the library(car) package
+# Recode Variables: Recode using the library(car) package
 cust_data$gender<-recode(cust_data$gender, "'Male'=1; 'Female'=0")
 cust_data$Partner<-recode(cust_data$Partner, "'Yes'=1; 'No'=0")
 cust_data$Dependents<-recode(cust_data$Dependents, "'Yes'=1; 'No'=0")
@@ -56,23 +56,23 @@ cust_data$PaperlessBilling<- recode(cust_data$PaperlessBilling, "'Yes'=1; 'No'=0
 cust_data$PaymentMethod <- recode(cust_data$PaymentMethod, "'Electronic check'=1; 'Mailed check'=2;'Bank transfer (automatic)'=3; 'Credit card (automatic)'=4")
 
 #################################
-#Data Exploratory               #
+# Data Exploratory              #
 #################################
 
-#overview of customer data
+# overview of customer data
 View(cust_data)
 summary(cust_data)
 str(cust_data)
 
-#Correlation Matrix
+# Correlation Matrix
 corrmatrix <- round(cor(cust_data[]), digits = 2)
 corrmatrix
 
-#heatmap of correlation matrix using ggplot2
+# heatmap of correlation matrix using ggplot2
 qplot(x=Var1, y=Var2, data=melt(cor(cust_data, use="p")), fill=value, geom="tile") +  scale_fill_gradient2(limits=c(-1, 1))
 
 #########################################
-#Model Building                         #
+# Model Building                        #
 #########################################
 
 # For training and testing purpose,
@@ -84,7 +84,7 @@ training<-cust_data[intrain,]
 testing<-cust_data[-intrain,]
 
 #########################################
-#Model 1: Logistic Regression Model     #
+# Model 1: Logistic Regression Model    #
 #########################################
 
 # Select the features to be used based on forward selection procedure
@@ -99,17 +99,16 @@ fwdSelection = step(intMod, scope=list(lower=formula(intMod),upper=formula(fullM
 formula(fwdSelection)
 summary(fwdSelection)
 
-#Logistic Regression Model with selected variables
+# Logistic Regression Model with selected variables
 
 logic_reg <- glm(Churn ~ Contract + InternetService + tenure + PaperlessBilling+TotalCharges + MultipleLines + PaymentMethod +SeniorCitizen + StreamingTV + OnlineSecurity + TechSupport + StreamingMovies + MonthlyCharges + PhoneService + Dependents, data=training, family=binomial)
 
 summary(logic_reg)
 
 #----------------------------------------------------------------
-#Predictive Performance Measurement
+# Predictive Performance Measurement
 #----------------------------------------------------------------
 
-#Influence Plot
 # Diagnostic Plot 
 influenceIndexPlot(logic_reg, vars=c("cook","hat"), id.n = 3 )
 
