@@ -87,6 +87,18 @@ testing<-cust_data[-intrain,]
 #Model 1: Logistic Regression Model     #
 #########################################
 
+#Select the features to be used based on forward selection procedure
+#Lower AIC indicates better model
+
+fullMod = glm(Churn ~ ., data= training, family= binomial)
+summary(fullMod)
+intMod <- glm(Churn ~ 1, data= training, family= binomial)
+summary(intMod)
+fwdSelection = step(intMod, scope=list(lower=formula(intMod),upper=formula(fullMod)), direction="forward")
+formula(fwdSelection)
+summary(fwdSelection)
+
+
 #Predictive Performance Measurement
 
 #Odd Ratio
