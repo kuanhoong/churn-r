@@ -49,6 +49,7 @@ cust_data$PaymentMethod <- recode(cust_data$PaymentMethod, "'Electronic check'=1
 
 #data exploratory
 
+
 #Model Building
 #split data to 80-20
 
