@@ -130,6 +130,23 @@ exp(cbind(OR=coef(logic_reg), confint(logic_reg)))
 # important? Are the predictions accurate? Listed below
 # are some of the Diagnostics tests.
 
+# Churn Prediction using glm
+predict <- predict(logic_reg, type = 'response')
+
+# Confusion Matrix
+
+#confusion matrix
+table(training$Churn, predict > 0.5)
+
+#ROCR Curve
+ROCRpred <- prediction(predict, training$Churn)
+ROCRperf <- performance(ROCRpred, 'tpr','fpr')
+plot(ROCRperf, colorize = TRUE, text.adj = c(-0.2,1.7))
+
+#plot glm
+ggplot(training, aes(x=Rating, y=Churn)) + geom_point() + 
+  stat_smooth(method="glm", family="binomial", se=FALSE)
+
 ###############################################
 #Model 2: Support Vector Machine (SVM) Model  #
 ###############################################
