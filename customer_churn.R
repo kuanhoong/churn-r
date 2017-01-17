@@ -105,9 +105,9 @@ logic_reg <- glm(Churn ~ Contract + InternetService + tenure + PaperlessBilling+
 
 summary(logic_reg)
 
-#----------------------------------------------------------------
+#--------------------------------------------
 # Predictive Performance Measurement
-#----------------------------------------------------------------
+#--------------------------------------------
 
 # Diagnostic Plot 
 influenceIndexPlot(logic_reg, vars=c("cook","hat"), id.n = 3 )
@@ -115,7 +115,8 @@ influenceIndexPlot(logic_reg, vars=c("cook","hat"), id.n = 3 )
 # Influence Plot 
 influencePlot(logic_reg,	id.method="identify", main="Influence Plot", sub="Circle size is proportial to Cook's Distance" )
 
-#Odd Ratio
+# Odd Ratio
+exp(confint(logic_reg))
 
 ###############################################
 #Model 2: Support Vector Machine (SVM) Model  #
