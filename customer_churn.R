@@ -14,12 +14,14 @@ library(car)
 library(corrplot)
 library(rattle)
 library(randomForest)
-library(rpart)
 library(C50)
+library(rpart)
 library(ROCR)
 library(e1071)
+library(gmodels)
 
 #load the data
+library(data.table)
 cust_data<-fread('telco.csv', header=TRUE, sep=",")
 
 #########################
@@ -55,6 +57,9 @@ cust_data$Contract <- recode(cust_data$Contract, "'Month-to-month'=0; 'One year'
 cust_data$PaperlessBilling<- recode(cust_data$PaperlessBilling, "'Yes'=1; 'No'=0")
 cust_data$PaymentMethod <- recode(cust_data$PaymentMethod, "'Electronic check'=1; 'Mailed check'=2;'Bank transfer (automatic)'=3; 'Credit card (automatic)'=4")
 
+#convert column to factor
+cust_data[,'Churn'] <- lapply(cust_data[,'Churn'] , factor)
+
 #################################
 # Data Exploratory              #
 #################################
@@ -78,6 +83,7 @@ qplot(x=Var1, y=Var2, data=melt(cor(cust_data, use="p")), fill=value, geom="tile
 # For training and testing purpose,
 # split the data to 80-20
 
+library(caret)
 set.seed(1234)
 intrain<-createDataPartition(y=cust_data$Churn,p=0.8,list=FALSE, times = 1)
 training<-cust_data[intrain,]
@@ -109,6 +115,9 @@ summary(logic_reg)
 # Predictive Performance Measurement
 #--------------------------------------------
 
+# Run the anova() function on the model to analyze the table of deviance
+anova(logic_reg, test="Chisq")
+
 # Diagnostic Plot 
 influenceIndexPlot(logic_reg, vars=c("cook","hat"), id.n = 3 )
 
@@ -121,7 +130,7 @@ exp(confint(logic_reg))
 exp(logic_reg$coefficients)
 
 # Odd Ratio and 95% Confidence Interval
-exp(cbind(OR=coef(logic_reg), confint(logic_reg)))
+exp(cbind(OddRatio=coef(logic_reg), confint(logic_reg)))
 
 # A logistic regression model has been built and the
 # coefficients have been examined. However, some critical
@@ -131,51 +140,87 @@ exp(cbind(OR=coef(logic_reg), confint(logic_reg)))
 # are some of the Diagnostics tests.
 
 # Churn Prediction using glm
-predict <- predict(logic_reg, type = 'response')
+predict <- predict(logic_reg, testing[,-20], type = 'response')
 
-# Confusion Matrix
-
-#confusion matrix
-table(training$Churn, predict > 0.5)
+# Confusion matrix
+table(testing$Churn, predict > 0.5)
 
 # Receiver Operating Characteristic (ROC) curves
 
-ROCRpred <- prediction(predict, training$Churn)
+ROCRpred <- prediction(predict, testing$Churn)
 ROCRperf <- performance(ROCRpred, 'tpr','fpr')
 plot(ROCRperf, colorize = TRUE, text.adj = c(-0.2,1.7))
 abline(a=0, b= 1)
 
-# Accuracy
+# For accuracy, calculate the AUC (area under the curve) which
+# are typical performance measurements for a binary classifier.
+acc.perf <- performance(ROCRpred, measure = 'auc')
+acc.perf <- acc.perf@y.values[[1]]
+acc.perf
 
-acc.perf = performance(ROCRpred, measure = 'acc')
-plot(acc.perf)
 
 #plot glm
 ggplot(training, aes(x=Rating, y=Churn)) + geom_point() + 
   stat_smooth(method="glm", family="binomial", se=FALSE)
 
-###############################################
-#Model 2: Support Vector Machine (SVM) Model  #
-###############################################
+################################################
+# Model 2: Support Vector Machine (SVM) Model  #
+################################################
+
+svm <- tune.svm(Churn ~., data = training, gamma = 10^2, cost=10^2, tunecontrol=tune.control(cross=10))
+
+print(svm)
+summary (svm)
+svm$performances
+
+svmfit <- svm$best.model
+table(training[training$Churn,], predict(svmfit))
 
 ######################################
-#Model 3: Random Forest Model        #
+# Model 3: Random Forest Model       #
 ######################################
 
-#Variable Importance Plot
+# Random Forest is an ensemble learning  based classification
+# and regression technique. It is one of the commonly used 
+# predictive modelling and machine learning technique. 
+
+library(randomForest)
+rf <- randomForest(Churn ~., data=training, ntree=500,importance=T)
+
+print(rf)
+importance(rf)
+
+plot.new()
+varImpPlot(rf, type=1, pch=19, col=1, cex=1.0, main="Variable Importance Plot")
+abline(v=35, col="blue")
+
+plot.new()
+varImpPlot(rf, type=2, pch=19, col=1, cex=1.0, main="Variable Importance Plot")
+
+################################################
+# Model 4: C50 algorithm and decision rule     #
+################################################
+
+# The syntax is : C5.0 (dataframe of predictors, vector of predicted
+# classes). So here we selected as input dataframe all columns except the
+# one containing the churn (the 20th column), and as class we use the
+# churn info 
+
+library(c50)
+c50model <- C5.0(training[,-20], training$Churn)
+c50model
+summary(c50model)
+
+# Testing the model
+c50pred <- predict(c50model, testing[,-20])
+
+# Confusion Matrix
+library(gmodels)
+CrossTable(testing$Churn, c50pred, prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE, dnn = c('actual default', 'predicted default'))
 
 
-#######################################
-#C50 algorithm and decision rule      #
-#######################################
-
-
-
-
-
-
-
-
-
+#--------------------------------------------
+# Models Performance Comparison
+#--------------------------------------------
 
 
