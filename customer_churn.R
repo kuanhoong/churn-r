@@ -233,8 +233,22 @@ abline(a=0, b= 1, col='red', lwd=2.5, lty=2)
 title('ROC Curve')
 legend()
 
-# For accuracy, calculate the AUC (area under the curve) which
-# are typical performance measurements for a binary classifier.
-acc.perf <- performance(glmpred, measure = 'auc')
-acc.perf <- acc.perf@y.values[[1]]
-acc.perf
+# AUC (area under the curve) Calculation Matrix
+
+glm.perf <- performance(glmpred, measure = 'auc')
+glm.perf <- glm.perf@y.values[[1]]
+print(glm.perf)
+
+svm.perf <- performance(svmpred, measure = 'auc')
+svm.perf <- svm.perf@y.values[[1]]
+print(svm.perf)
+
+rf.perf <- performance(rfpred, measure = 'auc')
+rf.perf <- rf.perf@y.values[[1]]
+print(rf.perf)
+
+########################################
+# Save the model to file              #
+########################################
+
+save(logic_reg, file='churnmodel.rda')
