@@ -167,7 +167,8 @@ svmfit <- svm$best.model
 # predictive modelling and machine learning technique. 
 
 library(randomForest)
-rf <- randomForest(Churn ~ ., data=training, ntree=500,importance=T)
+set.seed(1234)
+rf <- randomForest(Churn ~ ., data=training, ntree=1000,importance=T)
 
 print(rf)
 importance(rf)
