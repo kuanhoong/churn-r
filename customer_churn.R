@@ -70,11 +70,11 @@ summary(cust_data)
 str(cust_data)
 
 # Correlation Matrix
-corrmatrix <- round(cor(cust_data[]), digits = 2)
+corrmatrix <- round(cor(cust_data[,-'Churn']), digits = 2)
 corrmatrix
 
 # heatmap of correlation matrix using ggplot2
-qplot(x=Var1, y=Var2, data=melt(cor(cust_data, use="p")), fill=value, geom="tile") +  scale_fill_gradient2(limits=c(-1, 1))
+qplot(x=Var1, y=Var2, data=melt(cor(cust_data[,-'Churn'], use="p")), fill=value, geom="tile") +  scale_fill_gradient2(limits=c(-1, 1))
 
 #########################################
 # Model Building                        #
@@ -158,11 +158,6 @@ acc.perf <- performance(ROCRpred, measure = 'auc')
 acc.perf <- acc.perf@y.values[[1]]
 acc.perf
 
-
-#plot glm
-ggplot(training, aes(x=Rating, y=Churn)) + geom_point() + 
-  stat_smooth(method="glm", family="binomial", se=FALSE)
-
 ################################################
 # Model 2: Support Vector Machine (SVM) Model  #
 ################################################
@@ -174,7 +169,10 @@ summary (svm)
 svm$performances
 
 svmfit <- svm$best.model
+
 table(training[training$Churn,], predict(svmfit))
+
+
 
 ######################################
 # Model 3: Random Forest Model       #
