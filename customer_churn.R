@@ -245,7 +245,7 @@ rf.perf <- rf.perf@y.values[[1]]
 print(rf.perf)
 
 ########################################
-# Save the model to file              #
+# Save the model to file               #
 ########################################
 
 save(logic_reg, file='churnmodel.rda')
