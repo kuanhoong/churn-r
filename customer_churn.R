@@ -144,7 +144,11 @@ exp(cbind(OddRatio=coef(logic_reg), confint(logic_reg)))
 # Model 2: Support Vector Machine (SVM) Model  #
 ################################################
 
-svm <- tune.svm(Churn ~  Contract + InternetService + tenure + PaperlessBilling+TotalCharges + MultipleLines + PaymentMethod +SeniorCitizen + StreamingTV + OnlineSecurity + TechSupport + StreamingMovies + MonthlyCharges + PhoneService + Dependents, data = training, gamma = 10^2, cost=10^2, tunecontrol=tune.control(cross=10))
+# This can take a very long time.
+# It will return the best values to use
+# for the parameters gamma and cost 
+
+svm <- tune.svm(Churn ~ ., data = training, seq(0.5, 0.9, by = 0.1), cost = seq(100,1000, by = 100), tunecontrol=tune.control(cross=10))
 
 print(svm)
 summary (svm)
@@ -163,7 +167,7 @@ svmfit <- svm$best.model
 # predictive modelling and machine learning technique. 
 
 library(randomForest)
-rf <- randomForest(Churn ~ Contract + InternetService + tenure + PaperlessBilling+TotalCharges + MultipleLines + PaymentMethod +SeniorCitizen + StreamingTV + OnlineSecurity + TechSupport + StreamingMovies + MonthlyCharges + PhoneService + Dependents, data=training, ntree=500,importance=T)
+rf <- randomForest(Churn ~ ., data=training, ntree=500,importance=T)
 
 print(rf)
 importance(rf)
@@ -208,7 +212,6 @@ CrossTable(testing$Churn, svmpred, prop.chisq = FALSE, prop.c = FALSE, prop.r = 
 CrossTable(testing$Churn, rfpred, prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE, dnn = c('actual default', 'predicted default'))
 
 # Receiver Operating Characteristic (ROC) curves
-
 
 svmpred<-as.numeric(levels(svmpred))[svmpred]
 rfpred<-as.numeric(levels(rfpred))[rfpred]
