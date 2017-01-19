@@ -118,11 +118,17 @@ summary(logic_reg)
 # Run the anova() function on the model to analyze the table of deviance
 anova(logic_reg, test="Chisq")
 
+# Regression model building is often an iterative and
+# interactive process. The first model we try may prove
+# to be inadequate. Regression diagnostics are
+# used to detect problems with the model
+# and suggest improvements.
+
 # Diagnostic Plot 
 influenceIndexPlot(logic_reg, vars=c("cook","hat"), id.n = 3 )
 
 # Influence Plot 
-influencePlot(logic_reg,	id.method="identify", main="Influence Plot", sub="Circle size is proportial to Cook's Distance" )
+influencePlot(logic_reg, id.method="identify", main="Influence Plot", sub="Circle size is proportial to Cook's Distance" )
 
 #Confidence Interval (CI) and Coefficient in scaled format
 exp(confint(logic_reg))
@@ -170,9 +176,8 @@ svm$performances
 
 svmfit <- svm$best.model
 
-table(training[training$Churn,], predict(svmfit))
-
-
+prediction <- predict(svmfit, training[,-20])
+table(pred = prediction, true = training$Churn)
 
 ######################################
 # Model 3: Random Forest Model       #
@@ -204,7 +209,7 @@ varImpPlot(rf, type=2, pch=19, col=1, cex=1.0, main="Variable Importance Plot")
 # one containing the churn (the 20th column), and as class we use the
 # churn info 
 
-library(c50)
+library(C50)
 c50model <- C5.0(training[,-20], training$Churn)
 c50model
 summary(c50model)
