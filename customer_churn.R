@@ -191,16 +191,14 @@ c50model
 summary(c50model)
 
 
-#--------------------------------------------
-# Models Performance Comparison
-#--------------------------------------------
-
+#########################################
+# Models Performance Evaluation         #
+#########################################
 
 # Testing the model
 glmpred <- predict(logic_reg, testing[,-20], type = 'response')
 svmpred <- predict(svmfit, testing[,-20], type='response')
 rfpred <- predict(rf, testing[,-20], type='response')
-
 
 # Confusion Matrix
 CrossTable(testing$Churn, glmpred>0.5, prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE, dnn = c('actual default', 'predicted default'))
@@ -208,7 +206,6 @@ CrossTable(testing$Churn, glmpred>0.5, prop.chisq = FALSE, prop.c = FALSE, prop.
 CrossTable(testing$Churn, svmpred, prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE, dnn = c('actual default', 'predicted default'))
 
 CrossTable(testing$Churn, rfpred, prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE, dnn = c('actual default', 'predicted default'))
-
 
 # Receiver Operating Characteristic (ROC) curves
 
@@ -231,7 +228,7 @@ plot(rfperf, add=TRUE, col='blue', lwd=2.5)
 abline(a=0, b= 1, col='red', lwd=2.5, lty=2)
 
 title('ROC Curve')
-legend()
+legend("bottomright", c("Logistic","SVM","RF"), lty=c(1,1,1), lwd=c(1.4,1.4,1.4), col=c('green','orange','blue'))
 
 # AUC (area under the curve) Calculation Matrix
 
