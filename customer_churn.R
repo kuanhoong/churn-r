@@ -118,11 +118,12 @@ summary(logic_reg)
 # Run the anova() function on the model to analyze the table of deviance
 anova(logic_reg, test="Chisq")
 
-# Regression model building is often an iterative and
-# interactive process. The first model we try may prove
-# to be inadequate. Regression diagnostics are
-# used to detect problems with the model
-# and suggest improvements.
+# A logistic regression model has been built and the
+# coefficients have been examined. However, some critical
+# questions remain. Is the model any good? How well does
+# the model fit the data? Which predictors are most
+# important? Are the predictions accurate? Listed below
+# are some of the Diagnostics tests.
 
 # Diagnostic Plot 
 influenceIndexPlot(logic_reg, vars=c("cook","hat"), id.n = 3 )
@@ -138,31 +139,6 @@ exp(logic_reg$coefficients)
 # Odd Ratio and 95% Confidence Interval
 exp(cbind(OddRatio=coef(logic_reg), confint(logic_reg)))
 
-# A logistic regression model has been built and the
-# coefficients have been examined. However, some critical
-# questions remain. Is the model any good? How well does
-# the model fit the data? Which predictors are most
-# important? Are the predictions accurate? Listed below
-# are some of the Diagnostics tests.
-
-# Churn Prediction using glm
-predict <- predict(logic_reg, testing[,-20], type = 'response')
-
-# Confusion matrix
-table(testing$Churn, predict > 0.5)
-
-# Receiver Operating Characteristic (ROC) curves
-
-ROCRpred <- prediction(predict, testing$Churn)
-ROCRperf <- performance(ROCRpred, 'tpr','fpr')
-plot(ROCRperf, colorize = TRUE, text.adj = c(-0.2,1.7))
-abline(a=0, b= 1)
-
-# For accuracy, calculate the AUC (area under the curve) which
-# are typical performance measurements for a binary classifier.
-acc.perf <- performance(ROCRpred, measure = 'auc')
-acc.perf <- acc.perf@y.values[[1]]
-acc.perf
 
 ################################################
 # Model 2: Support Vector Machine (SVM) Model  #
@@ -174,10 +150,9 @@ print(svm)
 summary (svm)
 svm$performances
 
+# Find the best SVM model
 svmfit <- svm$best.model
 
-prediction <- predict(svmfit, training[,-20])
-table(pred = prediction, true = training$Churn)
 
 ######################################
 # Model 3: Random Forest Model       #
@@ -200,26 +175,20 @@ abline(v=35, col="blue")
 plot.new()
 varImpPlot(rf, type=2, pch=19, col=1, cex=1.0, main="Variable Importance Plot")
 
+
 ################################################
 # Model 4: C50 algorithm and decision rule     #
 ################################################
 
 # The syntax is : C5.0 (dataframe of predictors, vector of predicted
-# classes). So here we selected as input dataframe all columns except the
-# one containing the churn (the 20th column), and as class we use the
-# churn info 
+# classes). So here we selected as input dataframe all columns
+# except the one containing the churn (the 20th column), and as
+# class we use the churn info 
 
 library(C50)
 c50model <- C5.0(training[,-20], training$Churn)
 c50model
 summary(c50model)
-
-# Testing the model
-c50pred <- predict(c50model, testing[,-20])
-
-# Confusion Matrix
-library(gmodels)
-CrossTable(testing$Churn, c50pred, prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE, dnn = c('actual default', 'predicted default'))
 
 
 #--------------------------------------------
@@ -227,3 +196,45 @@ CrossTable(testing$Churn, c50pred, prop.chisq = FALSE, prop.c = FALSE, prop.r = 
 #--------------------------------------------
 
 
+# Testing the model
+glmpred <- predict(logic_reg, testing[,-20], type = 'response')
+svmpred <- predict(svmfit, testing[,-20], type='response')
+rfpred <- predict(rf, testing[,-20], type='response')
+
+
+# Confusion Matrix
+CrossTable(testing$Churn, glmpred>0.5, prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE, dnn = c('actual default', 'predicted default'))
+
+CrossTable(testing$Churn, svmpred, prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE, dnn = c('actual default', 'predicted default'))
+
+CrossTable(testing$Churn, rfpred, prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE, dnn = c('actual default', 'predicted default'))
+
+
+# Receiver Operating Characteristic (ROC) curves
+
+svmpred<-as.numeric(levels(svmpred))[svmpred]
+rfpred<-as.numeric(levels(rfpred))[rfpred]
+
+glmpred <- prediction(glmpred, testing$Churn)
+glmperf <- performance(glmpred, 'tpr','fpr')
+
+svmpred <- prediction(svmpred, testing$Churn)
+svmperf <- performance(svmpred, 'tpr','fpr')
+
+rfpred <- prediction(rfpred, testing$Churn)
+rfperf <- performance(rfpred, 'tpr','fpr')
+
+plot.new()
+plot(glmperf, col='green', lwd=2.5)
+plot(svmperf, add=TRUE, col='orange', lwd=2.5)
+plot(rfperf, add=TRUE, col='blue', lwd=2.5)
+abline(a=0, b= 1, col='red', lwd=2.5, lty=2)
+
+title('ROC Curve')
+legend()
+
+# For accuracy, calculate the AUC (area under the curve) which
+# are typical performance measurements for a binary classifier.
+acc.perf <- performance(glmpred, measure = 'auc')
+acc.perf <- acc.perf@y.values[[1]]
+acc.perf
