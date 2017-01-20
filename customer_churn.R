@@ -74,7 +74,9 @@ corrmatrix <- round(cor(cust_data[,-'Churn']), digits = 2)
 corrmatrix
 
 # heatmap of correlation matrix using ggplot2
+png('correlation_matrix.png')
 qplot(x=Var1, y=Var2, data=melt(cor(cust_data[,-'Churn'], use="p")), fill=value, geom="tile") +  scale_fill_gradient2(limits=c(-1, 1))
+dev.off()
 
 #########################################
 # Model Building                        #
@@ -125,11 +127,15 @@ anova(logic_reg, test="Chisq")
 # important? Are the predictions accurate? Listed below
 # are some of the Diagnostics tests.
 
-# Diagnostic Plot 
+# Diagnostic Plot
+png('diagnostic_plots.png')
 influenceIndexPlot(logic_reg, vars=c("cook","hat"), id.n = 3 )
+dev.off()
 
 # Influence Plot 
+png('influence_plot_cook.png')
 influencePlot(logic_reg, id.method="identify", main="Influence Plot", sub="Circle size is proportial to Cook's Distance" )
+dev.off()
 
 #Confidence Interval (CI) and Coefficient in scaled format
 exp(confint(logic_reg))
@@ -174,11 +180,15 @@ print(rf)
 importance(rf)
 
 plot.new()
+png('Mean_Decrease_Accuracy.png')
 varImpPlot(rf, type=1, pch=19, col=1, cex=1.0, main="Variable Importance Plot")
 abline(v=35, col="blue")
+dev.off()
 
 plot.new()
+png('Mean_Decrease_Gini.png')
 varImpPlot(rf, type=2, pch=19, col=1, cex=1.0, main="Variable Importance Plot")
+dev.off()
 
 
 ################################################
@@ -227,6 +237,7 @@ rfpred <- prediction(rfpred, testing$Churn)
 rfperf <- performance(rfpred, 'tpr','fpr')
 
 plot.new()
+png('ROC_curve.png')
 plot(glmperf, col='green', lwd=2.5)
 plot(svmperf, add=TRUE, col='orange', lwd=2.5)
 plot(rfperf, add=TRUE, col='blue', lwd=2.5)
@@ -234,6 +245,7 @@ abline(a=0, b= 1, col='red', lwd=2.5, lty=2)
 
 title('ROC Curve')
 legend("bottomright", c("Logistic","SVM","RF"), lty=c(1,1,1), lwd=c(1.4,1.4,1.4), col=c('green','orange','blue'))
+dev.off()
 
 # AUC (area under the curve) Calculation Matrix
 
