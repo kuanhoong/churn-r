@@ -201,10 +201,16 @@ dev.off()
 # class we use the churn info 
 
 library(C50)
-c50model <- C5.0(training[,-20], training$Churn)
+
+# run C5.0 model to derive decision rules to obtain insights
+c50model <- C5.0(Churn~., data=training, rules = TRUE)
 c50model
+
+#display the summary for C50
 summary(c50model)
 
+C5imp(c50model, metric = 'usage')
+C5imp(c50model, metric = 'splits')
 
 #########################################
 # Models Performance Evaluation         #
