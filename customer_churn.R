@@ -154,7 +154,7 @@ exp(cbind(OddRatio=coef(logic_reg), confint(logic_reg)))
 # It will return the best values to be used
 # for the parameters gamma and cost.
 
-svm <- tune.svm(Churn ~ ., data = training, seq(0.5, 0.9, by = 0.1), cost = seq(100,1000, by = 100), tunecontrol=tune.control(cross=10))
+svm <- tune.svm(Churn ~ ., data = training, seq(0.5, 0.9, by = 0.1), cost = seq(100,1000, by = 100), kernel="radial", tunecontrol=tune.control(cross=10))
 
 print(svm)
 summary (svm)
