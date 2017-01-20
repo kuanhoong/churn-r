@@ -75,7 +75,7 @@ corrmatrix
 
 # heatmap of correlation matrix using ggplot2
 png('correlation_matrix.png')
-qplot(x=Var1, y=Var2, data=melt(cor(cust_data[,-'Churn'], use="p")), fill=value, geom="tile") +  scale_fill_gradient2(limits=c(-1, 1))
+qplot(x=Var1, y=Var2, data=melt(cor(cust_data[,-'Churn'], use="p")), fill=value, geom="tile") +  scale_fill_gradient2(limits=c(-1, 1))+labs(title = "Correlation Matrix")
 dev.off()
 
 #########################################
@@ -134,7 +134,7 @@ dev.off()
 
 # Influence Plot 
 png('influence_plot_cook.png')
-influencePlot(logic_reg, id.method="identify", main="Influence Plot", sub="Circle size is proportial to Cook's Distance" )
+influencePlot(logic_reg, id.method="identify", main="Influence Plot - Cook", sub="Circle size is proportial to Cook's Distance" )
 dev.off()
 
 #Confidence Interval (CI) and Coefficient in scaled format
@@ -181,13 +181,13 @@ importance(rf)
 
 plot.new()
 png('Mean_Decrease_Accuracy.png')
-varImpPlot(rf, type=1, pch=19, col=1, cex=1.0, main="Variable Importance Plot")
+varImpPlot(rf, type=1, pch=19, col=1, cex=1.0, main="Mean Decrease Accuracy Plot")
 abline(v=35, col="blue")
 dev.off()
 
 plot.new()
 png('Mean_Decrease_Gini.png')
-varImpPlot(rf, type=2, pch=19, col=1, cex=1.0, main="Variable Importance Plot")
+varImpPlot(rf, type=2, pch=19, col=1, cex=1.0, main="Mean Decrease Gini Plot")
 dev.off()
 
 
