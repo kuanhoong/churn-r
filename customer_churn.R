@@ -222,6 +222,7 @@ svmpred <- predict(svmfit, testing[,-20], type='response')
 rfpred <- predict(rf, testing[,-20], type='response')
 
 # Confusion Matrix
+
 CrossTable(testing$Churn, glmpred>0.5, prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE, dnn = c('actual default', 'predicted default'))
 
 CrossTable(testing$Churn, svmpred, prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE, dnn = c('actual default', 'predicted default'))
