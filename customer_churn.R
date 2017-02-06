@@ -7,7 +7,13 @@
 
 # Start the clock!
 ptm <- proc.time()
-setwd('C:/Users/poku6001/Dropbox/My Documents/R/Talks/churn-r')
+setwd('C:/Users/Kuan/Dropbox/My Documents/R/Talks/churn-r')
+
+#check for installed packages
+packages <- c("caret", "data.table", "corrplot", "rattle", "randomForest", "C50", "rpart", "ROCR", "e1071","gmodels")
+if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
+  install.packages(setdiff(packages, rownames(installed.packages())))  
+}
 
 library(caret)
 library(ggplot2)
