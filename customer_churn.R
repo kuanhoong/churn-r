@@ -10,7 +10,7 @@ ptm <- proc.time()
 setwd('C:/Users/Kuan/Dropbox/My Documents/R/Talks/churn-r')
 
 #check for installed packages
-packages <- c("caret", "data.table", "corrplot", "rattle", "randomForest", "C50", "rpart", "ROCR", "e1071","gmodels")
+packages <- c("caret", "data.table", "corrplot", "randomForest", "C50", "rpart", "ROCR", "e1071","gmodels")
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
   install.packages(setdiff(packages, rownames(installed.packages())))  
 }
