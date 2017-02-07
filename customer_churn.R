@@ -7,7 +7,7 @@
 
 # Start the clock!
 ptm <- proc.time()
-setwd('C:/Users/Kuan/Dropbox/My Documents/R/Talks/churn-r')
+setwd('C:/Users/Kuan/Documents/GitHub/churn-r/')
 
 #check for installed packages
 packages <- c("caret", "data.table", "corrplot", "randomForest", "C50", "rpart", "ROCR", "e1071","gmodels")
@@ -290,16 +290,3 @@ sessionInfo()
 
 # Stop the clock
 proc.time() - ptm
-
-########################################
-# Load Saved Model                     #
-########################################
-
-load('churnmodel.rda')
-
-########################################
-# Run Model with new dataset           #
-########################################
-
-library(data.table)
-newdata <- fread.csv('telco1.csv')
