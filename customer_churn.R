@@ -30,7 +30,7 @@ library(gmodels)
 
 #load the data
 library(data.table)
-cust_data <- fread('telco.csv', header = TRUE, sep = ",")
+cust_data <- fread('telco.csv')
 
 #########################
 # Data Proprocessing    #        
@@ -290,3 +290,16 @@ sessionInfo()
 
 # Stop the clock
 proc.time() - ptm
+
+########################################
+# Load Saved Model                     #
+########################################
+
+load('churnmodel.rda')
+
+########################################
+# Run Model with new dataset           #
+########################################
+
+library(data.table)
+newdata <- fread.csv('telco1.csv')
