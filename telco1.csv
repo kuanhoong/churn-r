@@ -1,0 +1,10 @@
+customerID,gender,SeniorCitizen,Partner,Dependents,tenure,PhoneService,MultipleLines,InternetService,OnlineSecurity,OnlineBackup,DeviceProtection,TechSupport,StreamingTV,StreamingMovies,Contract,PaperlessBilling,PaymentMethod,MonthlyCharges,TotalCharges,Churn
+7688-BHGR,Male,0,Yes,Yes,2,Yes,Yes,Fiber optic,No,Yes,No,Yes,Yes,Yes,Month-to-month,Yes,Electronic check,31.11,33.65,
+2475-YUIBH,Male,0,No,No,12,Yes,No,DSL,No,No,Yes,No,No,No,One year,No,Mailed check,64.22,2133.56,
+1678-JUHGG,Female,1,No,No,16,Yes,Yes,DSL,Yes,Yes,No,No,No,Yes,Month-to-month,Yes,Mailed check,34.76,211.45,
+3244-KKILO,Male,0,Yes,No,21,No,No phone service,DSL,Yes,Yes,Yes,Yes,No,No,One year,No,Bank transfer (automatic),42.3,2432.76,
+2133-HQITU,Female,0,No,No,11,Yes,No,Fiber optic,No,No,No,No,No,No,Month-to-month,Yes,Electronic check,70.7,213.67,
+9315-JHGTY,Male,1,No,No,17,No,Yes,Fiber optic,No,No,Yes,No,Yes,Yes,Month-to-month,Yes,Electronic check,99.65,998.45,
+4152-MYUIK,Male,0,No,Yes,2,Yes,Yes,Fiber optic,No,Yes,No,Yes,Yes,No,Month-to-month,Yes,Credit card (automatic),89.1,1876.34,
+4321-MKIKO,Female,0,No,No,15,No,No phone service,DSL,Yes,No,No,No,No,No,One year,No,Mailed check,29.75,551.34,
+6612-IANKT,Male,0,Yes,No,17,Yes,Yes,Fiber optic,No,No,Yes,Yes,No,No,Month-to-month,Yes,Electronic check,104.8,4334.76,
