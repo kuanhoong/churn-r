@@ -7,10 +7,10 @@
 
 # Start the clock!
 ptm <- proc.time()
-setwd('C:/Users/Kuan/Documents/GitHub/churn-r/')
+setwd('C:/Users/Kuan/Dropbox/My Documents/R/Talks/churn-r')
 
 #check for installed packages
-packages <- c("caret", "data.table", "corrplot", "randomForest", "C50", "rpart", "ROCR", "e1071","gmodels")
+packages <- c("caret", "data.table", "corrplot", "rattle", "randomForest", "C50", "rpart", "ROCR", "e1071","gmodels")
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
   install.packages(setdiff(packages, rownames(installed.packages())))  
 }
@@ -30,7 +30,7 @@ library(gmodels)
 
 #load the data
 library(data.table)
-cust_data <- fread('telco.csv')
+cust_data <- fread('telco.csv', header = TRUE, sep = ",")
 
 #########################
 # Data Proprocessing    #        
@@ -86,6 +86,24 @@ png('correlation_matrix.png')
 qplot(x = Var1, y = Var2, data = melt(cor(cust_data[, - 'Churn'], use = "p")), fill = value, geom = "tile") + scale_fill_gradient2(limits = c(-1, 1)) + labs(title = "Correlation Matrix")
 dev.off()
 
+## Convert to categorical/factor variables
+cust_data$gender <- factor(cust_data$gender)
+cust_data$SeniorCitizen <- factor(cust_data$SeniorCitizen )
+cust_data$Partner <- factor(cust_data$Partner)
+cust_data$Dependents <- factor(cust_data$Dependents)
+cust_data$PhoneService <- factor(cust_data$PhoneService)
+cust_data$MultipleLines <- factor(cust_data$MultipleLines)
+cust_data$InternetService <- factor(cust_data$InternetService)
+cust_data$OnlineSecurity <- factor(cust_data$OnlineSecurity)
+cust_data$OnlineBackup <- factor(cust_data$OnlineBackup)
+cust_data$DeviceProtection <- factor(cust_data$DeviceProtection)
+cust_data$TechSupport <- factor(cust_data$TechSupport)
+cust_data$StreamingTV <- factor(cust_data$StreamingTV)
+cust_data$StreamingMovies <- factor(cust_data$StreamingMovies)
+cust_data$Contract <- factor(cust_data$Contract)
+cust_data$PaperlessBilling <- factor(cust_data$PaperlessBilling)
+cust_data$PaymentMethod <- factor(cust_data$PaymentMethod)
+
 #########################################
 # Model Building                        #
 #########################################
@@ -117,7 +135,7 @@ summary(fwdSelection)
 
 # Logistic Regression Model with selected variables
 
-logic_reg <- glm(Churn ~ Contract + InternetService + tenure + PaperlessBilling + TotalCharges + MultipleLines + PaymentMethod + SeniorCitizen + StreamingTV + OnlineSecurity + TechSupport + StreamingMovies + MonthlyCharges + PhoneService + Dependents, data = training, family = binomial)
+logic_reg <- glm(Churn ~ Contract + InternetService + tenure +MultipleLines + PaymentMethod + PaperlessBilling + TotalCharges + OnlineSecurity + TechSupport + SeniorCitizen + StreamingMovies + StreamingTV +MonthlyCharges, data = training, family = binomial)
 
 summary(logic_reg)
 
@@ -161,7 +179,7 @@ exp(cbind(OddRatio = coef(logic_reg), confint(logic_reg)))
 # This process may take a very long time.
 # It will return the best values to be used
 # for the parameters gamma and cost.
-
+set.seed(1234)
 svm <- tune.svm(Churn ~ ., data = training, seq(0.5, 0.9, by = 0.1), cost = seq(100, 1000, by = 100), kernel = "radial", tunecontrol = tune.control(cross = 10))
 
 print(svm)
@@ -281,6 +299,8 @@ print(rf.perf)
 ########################################
 
 save(logic_reg, file = 'churnmodel.rda')
+save(svmfit, file = 'svmmodel.rda')
+save(rf, file = 'rfmodel.rda')
 
 ########################################
 # Session Info                         #

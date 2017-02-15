@@ -7,7 +7,7 @@
 
 # Start the clock!
 ptm <- proc.time()
-setwd('C:/Users/Kuan/Documents/GitHub/churn-r/')
+setwd('C:/Users/Kuan/Dropbox/My Documents/R/Talks/churn-r')
 
 #load the data
 library(data.table)
@@ -46,30 +46,44 @@ cust_data1$PaymentMethod <- recode(cust_data1$PaymentMethod, "'Electronic check'
 #########################
 load('churnmodel.rda')
 
+
 #logic_reg <- glm(Churn ~ Contract 
-#                        + InternetService
-#                        + tenure
-#                        + PaperlessBilling
-#                        + TotalCharges
-#                        + MultipleLines
-#                        + PaymentMethod
-#                        + SeniorCitizen
-#                        + StreamingTV
-#                        + OnlineSecurity 
-#                        + TechSupport
-#                        + StreamingMovies
-#                        + MonthlyCharges
-#                        + PhoneService
-#                        + Dependents
+#                         + InternetService
+#                         + tenure
+#                         + MultipleLines
+#                         + PaymentMethod
+#                         + PaperlessBilling
+#                         + TotalCharges
+#                         + OnlineSecurity
+#                         + TechSupport
+#                         + SeniorCitizen
+#                         + StreamingMovies
+#                         + StreamingTV
+#                         + MonthlyCharges
 
 #for glm, requires to select the same variables used in training
-cust_data1 <- cust_data1[,c("Contract","InternetService","tenure","PaperlessBilling","TotalCharges","MultipleLines","PaymentMethod","SeniorCitizen","StreamingTV","OnlineSecurity","TechSupport","StreamingMovies","MonthlyCharges","PhoneService","Dependents","Churn")]
+cust_data1 <- cust_data1[,c("Contract","InternetService","tenure","MultipleLines","PaymentMethod","PaperlessBilling","TotalCharges","OnlineSecurity","TechSupport","SeniorCitizen","StreamingMovies","StreamingTV","MonthlyCharges","Churn")]
+
+## Convert to categorical/factor variables
+cust_data1$Contract <- factor(cust_data1$Contract)
+cust_data1$InternetService <- factor(cust_data1$InternetService)
+cust_data1$MultipleLines <- factor(cust_data1$MultipleLines)
+cust_data1$PaymentMethod <- factor(cust_data1$PaymentMethod)
+cust_data1$PaperlessBilling <- factor(cust_data1$PaperlessBilling)
+cust_data1$OnlineSecurity <- factor(cust_data1$OnlineSecurity)
+cust_data1$TechSupport <- factor(cust_data1$TechSupport)
+cust_data1$SeniorCitizen <- factor(cust_data1$SeniorCitizen )
+cust_data1$StreamingMovies <- factor(cust_data1$StreamingMovies)
+cust_data1$StreamingTV <- factor(cust_data1$StreamingTV)
 
 #churn prediction use glm
-cust_data1$Churn <- predict(logic_reg, cust_data1[, -16], type = 'response')
+cust_data1$Churn <- predict(logic_reg, cust_data1[, -14], type = 'response')
+
+#change cust_data1$churn from factor to numeric
+cust_data1$Churn <- as.numeric(as.character(cust_data1$Churn))
 
 #set threshold: Greater than 0.5, Churn = YES (1)
-cust_data1[cust_data1$Churn>0.5] <- 1
+cust_data1[cust_data1$Churn>0.5] <- 1L
 cust_data1[cust_data1$Churn<0.5] <- 0
 
 print(cust_data1$Churn)
